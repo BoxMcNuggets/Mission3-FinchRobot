@@ -122,61 +122,61 @@ namespace Project_FinchControl
 
         static void DataRecorderMenuScreen(Finch myFinch) 
         {
-                Console.CursorVisible = true;
+            Console.CursorVisible = true;
 
-                int numberOfPoints = 0;
-                double dataPointFrequency = 0;
-                double[] temperatures = null;
+            int numberOfPoints = 0;
+            double dataPointFrequency = 0;
+            double[] temperatures = null;
 
-                bool quitDataRecorderMenu = false;
-                string menuChoice;
+            bool quitDataRecorderMenu = false;
+            string menuChoice;
 
-                do
+            do
+            {
+                DisplayScreenHeader("Data Recorder Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Number of Data points");
+                Console.WriteLine("\tb) Frequency of Data Points");
+                Console.WriteLine("\tc) Get Data");
+                Console.WriteLine("\td) Show Data");
+                Console.WriteLine("\tq) Return to Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
                 {
-                    DisplayScreenHeader("Data Recorder Menu");
+                    case "a":
+                        numberOfPoints = DataRecorderDisplayGetNumberOfDataPoints();
+                        break;
 
-                    //
-                    // get user menu choice
-                    //
-                    Console.WriteLine("\ta) Number of Data points");
-                    Console.WriteLine("\tb) Frequency of Data Points");
-                    Console.WriteLine("\tc) Get Data");
-                    Console.WriteLine("\td) Show Data");
-                    Console.WriteLine("\tq) Return to Main Menu");
-                    Console.Write("\t\tEnter Choice:");
-                    menuChoice = Console.ReadLine().ToLower();
+                    case "b":
+                        dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
+                        break;
 
-                    //
-                    // process user menu choice
-                    //
-                    switch (menuChoice)
-                    {
-                        case "a":
-                            numberOfPoints = DataRecorderDisplayGetNumberOfDataPoints();
-                            break;
+                    case "c":
+                        temperatures = DataRecorderDisplayGetData(numberOfPoints, dataPointFrequency, myFinch);
+                        break;
 
-                        case "b":
-                            dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
-                            break;
+                    case "d":
+                        DataRecorderDisplayData(temperatures);
+                        break;
 
-                        case "c":
-                            temperatures = DataRecorderDisplayGetData(numberOfPoints, dataPointFrequency, myFinch);
-                            break;
+                    case "q":
+                        quitDataRecorderMenu = true;
+                        break;
 
-                        case "d":
-                            DataRecorderDisplayData(temperatures);
-                            break;
-
-                        case "q":
-                            quitDataRecorderMenu = true;
-                            break;
-
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("\tPlease enter a letter for the menu choice.");
-                            DisplayContinuePrompt();
-                            break;
-                    }
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
 
             } while (!quitDataRecorderMenu);
         }

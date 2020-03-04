@@ -118,6 +118,167 @@ namespace Project_FinchControl
             } while (!quitApplication);
         }
 
+        #region ALARM SYSTEM
+
+        static void LightAlarmDisplayMenuScreen(Finch finchRobot)
+        {
+            Console.CursorVisible = true;
+
+            string sensorsToMonitor = "";
+            string rangeType = "";
+            int minMaxThresholdValue = 0;
+            int timetoMonitor = 0;
+
+            bool quitDataRecorderMenu = false;
+            string menuChoice;
+
+            do
+            {
+                DisplayScreenHeader("Data Recorder Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) set sensors to monitor");
+                Console.WriteLine("\tb) set range type");
+                Console.WriteLine("\tc) set Maximum/Minimum Threshold Value");
+                Console.WriteLine("\td) Set time to monitor");
+                Console.WriteLine("\te) Set Alarm");
+                Console.WriteLine("\tq) Return to Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
+                {
+                    case "a":
+                        sensorsToMonitor = LightAlarmDisplaySetSensorsToMonitor();
+                        break;
+
+                    case "b":
+                        rangeType = LightAlarmDisplaySetRangeType();
+                        break;
+
+                    case "c":
+                        minMaxThresholdValue = LightAlarmDisplaySetMinMaxThresholdValue(rangeType, finchRobot);
+                        break;
+
+                    case "d":
+                        timetoMonitor = LightAlarmDisplaySetMaximumTimeToMonitor(rangeType, finchRobot);
+                        break;
+                    case "e":
+
+                        break;
+
+                    case "q":
+                        quitDataRecorderMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitDataRecorderMenu);
+        }
+
+        static string LightAlarmDisplaySetSensorsToMonitor()
+        {
+            string sensorsToMonitor;
+
+            DisplayScreenHeader("Sensors To Monitor");
+
+            Console.WriteLine("Sensors to monitor:");
+            sensorsToMonitor = Console.ReadLine();
+
+            DisplayContinuePrompt();
+
+            return sensorsToMonitor;
+        }
+
+        static string LightAlarmDisplaySetRangeType()
+        {
+            string rangeType;
+
+            DisplayScreenHeader("Range Type");
+
+            Console.WriteLine("Range Type:");
+            rangeType = Console.ReadLine();
+
+            DisplayContinuePrompt();
+
+            return rangeType;
+        }
+
+        static int LightAlarmDisplaySetMinMaxThresholdValue(string rangeType, Finch finchRobot) 
+        {
+            int minMaxThresholdValue;
+
+            // validation
+            bool validResponse;
+
+            do
+            {
+
+                DisplayScreenHeader("Min/Max Threshold Value");
+
+                Console.WriteLine($"Current Left light sensor: {finchRobot.getLeftLightSensor()}");
+                Console.WriteLine($"Current right light sensor value: {finchRobot.getRightLightSensor()}");
+                Console.WriteLine();
+
+                Console.Write($"{rangeType} light sensor value: ");
+                validResponse = int.TryParse(Console.ReadLine(), out minMaxThresholdValue);
+
+                if (!validResponse)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter an interger.");
+                    DisplayContinuePrompt();
+                }
+
+            } while (!validResponse);
+
+            //echo value back to user
+
+            DisplayContinuePrompt();
+
+            return minMaxThresholdValue;
+        }
+
+        static int LightAlarmDisplaySetMaximumTimeToMonitor(string rangeType, Finch finchRobot)
+        {
+            int timeToMonitor;
+
+            // validation
+            bool validResponse;
+
+            do
+            {
+
+                DisplayScreenHeader("Time to Monitor");
+
+                Console.WriteLine($"Time to Monitor:");
+                Console.WriteLine("Time to Monitor [seconds]");
+                Console.WriteLine();
+
+                Console.Write($"{rangeType} light sensor value: ");
+                validResponse = int.TryParse(Console.ReadLine(), out timeToMonitor);
+
+            } while (!validResponse);
+
+            //echo value back to user
+
+            DisplayContinuePrompt();
+
+            return timeToMonitor;
+        }
+
+        #endregion
+
         #region DATA RECORDER
 
         static void DataRecorderMenuScreen(Finch myFinch) 
@@ -185,7 +346,7 @@ namespace Project_FinchControl
         {
             DisplayScreenHeader("Data");
 
-            DataRecorderDisplayData(temperatures);
+            DataRecorderDisplayTable(temperatures);
 
             DisplayContinuePrompt();
         }
@@ -250,17 +411,29 @@ namespace Project_FinchControl
         static double DataRecorderDisplayGetDataPointFrequency()
         {
             int dataPointFrequency;
-            double validResponse;
+            bool validResponse;
+            string userResponse;
 
+            do
+            {
             DisplayScreenHeader("Data Point Frequency");
 
             Console.WriteLine("Data Point Frequency:");
 
+            userResponse = Console.ReadLine();
             // validate response
-            int.TryParse(Console.ReadLine(), out dataPointFrequency);
+            validResponse = int.TryParse(userResponse, out dataPointFrequency);
 
-            Console.WriteLine();
+            if (!validResponse)
+            {
+                Console.WriteLine("Please enter the Data Point Frequency.");
+                Console.WriteLine();
+            }
+
+                Console.WriteLine();
             Console.WriteLine($"Data Point Frequency: {dataPointFrequency}");
+            } while (!validResponse);
+
 
             DisplayContinuePrompt();
 
@@ -270,18 +443,32 @@ namespace Project_FinchControl
         static int DataRecorderDisplayGetNumberOfDataPoints()
         {
             int numberOfDataPoints;
-            double validResponse;
+            bool validResponse;
+            string userResponse;
 
-
+            do
+            {
             DisplayScreenHeader("Number of Data Points");
 
             Console.WriteLine("Number of data points:");
 
+            userResponse = Console.ReadLine();
             // validate response
-            int.TryParse(Console.ReadLine(), out numberOfDataPoints);
+            validResponse = int.TryParse(userResponse, out numberOfDataPoints);
+
+                if (!validResponse)
+                {
+                    Console.WriteLine("Please enter the Number of data points.");
+                    Console.WriteLine();
+                }
 
             Console.WriteLine();
             Console.WriteLine($"Number of Data Points: {numberOfDataPoints}");
+
+            } while (!validResponse);
+
+
+
 
             DisplayContinuePrompt();
 

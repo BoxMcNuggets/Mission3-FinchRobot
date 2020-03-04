@@ -421,6 +421,7 @@ namespace Project_FinchControl
             Console.WriteLine("Data Point Frequency:");
 
             userResponse = Console.ReadLine();
+
             // validate response
             validResponse = int.TryParse(userResponse, out dataPointFrequency);
 

@@ -92,7 +92,7 @@ namespace Project_FinchControl
                         break;
 
                     case "d":
-
+                        LightAlarmDisplayMenuScreen(finchRobot);
                         break;
 
                     case "e":
@@ -169,7 +169,7 @@ namespace Project_FinchControl
                         timetoMonitor = LightAlarmDisplaySetMaximumTimeToMonitor(rangeType, finchRobot);
                         break;
                     case "e":
-
+                        LightAlarmDisplaySetAlarm(finchRobot, sensorsToMonitor, rangeType, minMaxThresholdValue, timetoMonitor);
                         break;
 
                     case "q":
@@ -184,6 +184,98 @@ namespace Project_FinchControl
                 }
 
             } while (!quitDataRecorderMenu);
+        }
+
+        static void LightAlarmDisplaySetAlarm(
+            Finch finchRobot,
+            string sensorsToMonitor,
+            string rangeType,
+            int minMaxThresholdValue,
+            int timetoMonitor)
+        {
+            bool thresholdExceeded = false;
+
+            DisplayScreenHeader("Set Alarm");
+
+            Console.WriteLine($"\tSensor(s) to monitor: {sensorsToMonitor}");
+            Console.WriteLine($"\tRange Type: {rangeType}");
+            Console.WriteLine($"\t{rangeType} Threshold Value: {minMaxThresholdValue}");
+            Console.WriteLine($"\tTime to Monitor: {timetoMonitor}");
+            Console.WriteLine();
+
+            Console.WriteLine("Pres any key to begin monitoring.");
+            Console.ReadKey();
+
+            thresholdExceeded = LightAlarmMonitorLightSensors(finchRobot, sensorsToMonitor, rangeType, minMaxThresholdValue, timetoMonitor);          
+
+            if (thresholdExceeded)
+            {
+                Console.WriteLine($"The {rangeType} threshold value of {minMaxThresholdValue} was exceeded.");
+            }
+            else
+            {
+                Console.WriteLine("The treshold value was not exceeded.");
+            }
+
+
+            DisplayMenuPrompt("Light Alarm");
+        }
+
+        static void LightAlarmDisplayElapsedTime(int elapsedTime) 
+        {
+            Console.SetCursorPosition(15, 10);
+            Console.WriteLine($"Elapsed Time: {elapsedTime}");
+        }
+
+        static bool LightAlarmMonitorLightSensors(Finch finchRobot, string sensorsToMonitor, string  rangeType, int minMaxThresholdValue, int timetoMonitor) 
+        {
+            bool thresholdExceeded = false;
+            int elapsedTime = 0;
+            int currentLightSensorValue = 0;
+
+            while (!thresholdExceeded && elapsedTime < timetoMonitor)
+            {
+                currentLightSensorValue = LightAlarmGetCurrentLightSensorValue(finchRobot, sensorsToMonitor);
+
+                switch (rangeType)
+                {
+                    case "minimum":
+                        if (currentLightSensorValue < minMaxThresholdValue)
+                        {
+                            thresholdExceeded = true;
+                        }
+                        break;
+                    case "maximum":
+                        if (currentLightSensorValue > minMaxThresholdValue)
+                        {
+                            thresholdExceeded = true;
+                        }
+                        break;
+                }
+                finchRobot.wait(1000);
+                elapsedTime++;
+                LightAlarmDisplayElapsedTime(elapsedTime);
+            }
+                return thresholdExceeded;
+        }
+
+        static int LightAlarmGetCurrentLightSensorValue(Finch finchRobot, string sensorsToMonitor) 
+        {
+            int currentLightSensorValue = 0;
+            switch (sensorsToMonitor)
+            {
+                case "left":
+                    currentLightSensorValue = finchRobot.getLeftLightSensor();
+                    break;
+                case "right":
+                    currentLightSensorValue = finchRobot.getRightLightSensor();
+                    break;
+                case "both":
+                    currentLightSensorValue = (finchRobot.getLeftLightSensor() + finchRobot.getRightLightSensor()) / 2;
+                    currentLightSensorValue = (int)finchRobot.getLightSensors().Average();
+                    break;
+            }
+            return currentLightSensorValue;
         }
 
         static string LightAlarmDisplaySetSensorsToMonitor()
@@ -480,11 +572,11 @@ namespace Project_FinchControl
 
         #region TALENT SHOW
 
-        /// <summary>
+        /// 
         /// *****************************************************************
         /// *                     Talent Show Menu                          *
         /// *****************************************************************
-        /// </summary>
+        /// 
         static void DisplayTalentShowMenuScreen(Finch myFinch)
         {
             Console.CursorVisible = true;
@@ -500,9 +592,8 @@ namespace Project_FinchControl
                 // get user menu choice
                 //
                 Console.WriteLine("\ta) Light and Sound");
-                Console.WriteLine("\tb) ");
-                Console.WriteLine("\tc) ");
-                Console.WriteLine("\td) ");
+                Console.WriteLine("\tb) Dance");
+                Console.WriteLine("\tc) Mix it up");
                 Console.WriteLine("\tq) Main Menu");
                 Console.Write("\t\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
@@ -517,11 +608,11 @@ namespace Project_FinchControl
                         break;
 
                     case "b":
-
+                        DisplayDance(myFinch);
                         break;
 
                     case "c":
-
+                        DisplayMixingItUp(myFinch);
                         break;
 
                     case "d":
@@ -542,12 +633,13 @@ namespace Project_FinchControl
             } while (!quitTalentShowMenu);
         }
 
-        /// <summary>
+        ///
         /// *****************************************************************
         /// *               Talent Show > Light and Sound                   *
         /// *****************************************************************
-        /// </summary>
+        /// 
         /// <param name="finchRobot">finch robot object</param>
+        /// 
         static void DisplayLightAndSound(Finch finchRobot)
         {
             Console.CursorVisible = false;
@@ -557,13 +649,144 @@ namespace Project_FinchControl
             Console.WriteLine("\tThe Finch robot will not show off its glowing talent!");
             DisplayContinuePrompt();
 
-            for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
+            for (int lightSoundLevel = 255; lightSoundLevel > 0; lightSoundLevel -= 2)
             {
-                finchRobot.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
+                finchRobot.setLED(255, lightSoundLevel, lightSoundLevel);
                 finchRobot.noteOn(lightSoundLevel * 100);
+                finchRobot.noteOff();
+                finchRobot.setLED(0, 0, 0);
             }
 
             DisplayMenuPrompt("Talent Show Menu");
+        }
+
+        /// *****************************************************************
+        /// *               Talent Show > Dance                             *
+        /// *****************************************************************
+        /// 
+        /// <param name="myFinch"></param>
+        static void DisplayDance(Finch myFinch)
+        {
+            Console.CursorVisible = false;
+
+            DisplayScreenHeader("Dance");
+
+            Console.WriteLine("\tThe Finch robot will not show off its dance moves!");
+            DisplayContinuePrompt();
+
+            //
+            // shimmy
+            //
+            for (int Pattern = 0; Pattern < 7; Pattern++)
+            {
+                myFinch.setMotors(100, 100);
+                myFinch.wait(200);
+                myFinch.setMotors(-100, -100);
+                myFinch.wait(200);
+            }
+
+            //
+            //circle
+            //
+            for (int motorSpeed = 0; motorSpeed < 2; motorSpeed++)
+            {
+                myFinch.setMotors(255, 50);
+                myFinch.wait(3000);
+            }
+            myFinch.setMotors(0, 0);
+            DisplayMenuPrompt("Talent Show Menu");
+        }
+
+        /// *****************************************************************
+        /// *               Talent Show > Mixing It Up                      *
+        /// *****************************************************************
+        /// 
+        /// <param name="myFinch"></param>
+        static void DisplayMixingItUp(Finch myFinch)
+        {
+            Console.CursorVisible = false;
+
+            DisplayScreenHeader("Mix It Up");
+
+            Console.WriteLine("\tThe Finch robot will now do a little bit of everything!");
+            DisplayContinuePrompt();
+
+            for (int Mix = 0; Mix < 1; Mix++)
+            {
+                DisplayMusic(myFinch);
+                myFinch.setLED(Mix, 255, Mix);
+                myFinch.setMotors(255, 0);
+                myFinch.wait(200);
+                myFinch.setMotors(0, 255);
+                myFinch.wait(200);
+                myFinch.setMotors(-255, 0);
+                myFinch.wait(200);
+                myFinch.setMotors(0, -255);
+                myFinch.wait(200);
+            }
+            myFinch.setMotors(0, 0);
+
+            DisplayMenuPrompt("Talent Show Menu");
+        }
+
+        static void DisplayMusic(Finch myFinch)
+        {
+            //
+            // oh say can you see
+            //
+            myFinch.setLED(255, 0, 0);
+            myFinch.noteOn(700);
+            myFinch.wait(500);
+            myFinch.noteOn(500);
+            myFinch.wait(500);
+            myFinch.noteOn(400);
+            myFinch.wait(1200);
+            myFinch.noteOn(500);
+            myFinch.wait(700);
+            myFinch.noteOn(600);
+            myFinch.wait(700);
+            myFinch.noteOn(800);
+            myFinch.wait(500);
+            myFinch.noteOff();
+
+            //
+            // by the dawns early light
+            //
+            myFinch.setLED(255, 255, 255);
+            myFinch.wait(500);
+            myFinch.noteOn(1000);
+            myFinch.wait(700);
+            myFinch.noteOn(900);
+            myFinch.wait(500);
+            myFinch.noteOn(800);
+            myFinch.wait(700);
+            myFinch.noteOn(500);
+            myFinch.wait(600);
+            myFinch.noteOn(550);
+            myFinch.wait(600);
+            myFinch.noteOn(600);
+            myFinch.wait(700);
+            myFinch.noteOff();
+            myFinch.wait(500);
+
+            //
+            // whats so proudly we hailed
+            //
+            myFinch.setLED(0, 0, 255);
+            myFinch.noteOn(600);
+            myFinch.wait(700);
+            myFinch.noteOn(550);
+            myFinch.noteOn(1000);
+            myFinch.wait(900);
+            myFinch.noteOn(900);
+            myFinch.wait(500);
+            myFinch.noteOn(800);
+            myFinch.wait(500);
+            myFinch.noteOn(750);
+            myFinch.wait(700);
+            myFinch.noteOff();
+            myFinch.wait(200);
+            myFinch.noteOff();
         }
 
         #endregion

@@ -724,6 +724,7 @@ namespace Project_FinchControl
 
             for (int Mix = 0; Mix < 1; Mix++)
             {
+
                 DisplayMusic(myFinch);
                 myFinch.setLED(Mix, 255, Mix);
                 myFinch.setMotors(255, 0);

@@ -15,7 +15,7 @@ namespace Project_FinchControl
     // Application Type: Console
     // Author: Fink, Kyle
     // Dated Created: 2/26/2020
-    // Last Modified: 2/26/2020
+    // Last Modified: 3/6/2020
     //
     // **************************************************
 
@@ -114,7 +114,6 @@ namespace Project_FinchControl
                         DisplayContinuePrompt();
                         break;
                 }
-
             } while (!quitApplication);
         }
 
@@ -203,7 +202,7 @@ namespace Project_FinchControl
             Console.WriteLine($"\tTime to Monitor: {timetoMonitor}");
             Console.WriteLine();
 
-            Console.WriteLine("Pres any key to begin monitoring.");
+            Console.WriteLine("Press any key to begin monitoring.");
             Console.ReadKey();
 
             thresholdExceeded = LightAlarmMonitorLightSensors(finchRobot, sensorsToMonitor, rangeType, minMaxThresholdValue, timetoMonitor);          
@@ -615,10 +614,6 @@ namespace Project_FinchControl
                         DisplayMixingItUp(myFinch);
                         break;
 
-                    case "d":
-
-                        break;
-
                     case "q":
                         quitTalentShowMenu = true;
                         break;
@@ -673,25 +668,41 @@ namespace Project_FinchControl
 
             Console.WriteLine("\tThe Finch robot will not show off its dance moves!");
             DisplayContinuePrompt();
-
-            //
-            // shimmy
-            //
-            for (int Pattern = 0; Pattern < 7; Pattern++)
-            {
-                myFinch.setMotors(100, 100);
-                myFinch.wait(200);
-                myFinch.setMotors(-100, -100);
-                myFinch.wait(200);
-            }
-
+            
             //
             //circle
             //
-            for (int motorSpeed = 0; motorSpeed < 2; motorSpeed++)
+            for (int Pattern = 0; Pattern < 4; Pattern++)
             {
+                //myFinch.setMotors(100, 100);
+                //myFinch.wait(200);
+                //myFinch.setMotors(-100, -100);
+                //myFinch.wait(200);
                 myFinch.setMotors(255, 50);
-                myFinch.wait(3000);
+                myFinch.wait(1000);
+            }
+
+            //
+            // square
+            //
+            for (int pattern = 0; pattern < 1; pattern++)
+            {
+                myFinch.setMotors(255, 255);
+                myFinch.wait(500);
+                myFinch.setMotors(255,50);
+                myFinch.wait(550);
+                myFinch.setMotors(255, 255);
+                myFinch.wait(500);
+                myFinch.setMotors(255, 50);
+                myFinch.wait(550);
+                myFinch.setMotors(255, 255);
+                myFinch.wait(500);
+                myFinch.setMotors(255, 50);
+                myFinch.wait(550);
+                myFinch.setMotors(255, 255);
+                myFinch.wait(500);
+                myFinch.setMotors(255, 50);
+                myFinch.wait(550);
             }
             myFinch.setMotors(0, 0);
             DisplayMenuPrompt("Talent Show Menu");

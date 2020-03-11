@@ -277,14 +277,31 @@ namespace Project_FinchControl
             return currentLightSensorValue;
         }
 
-        static string LightAlarmDisplaySetSensorsToMonitor()
+        static string LightAlarmDisplaySetSensorsToMonitor(Finch finchRobot)
         {
             string sensorsToMonitor;
 
             DisplayScreenHeader("Sensors To Monitor");
 
             Console.WriteLine("Sensors to monitor:");
+            Console.WriteLine("\ta)Right");
+            Console.WriteLine("\tb)Left");
+            Console.WriteLine("\tc)Both");
             sensorsToMonitor = Console.ReadLine();
+
+            switch (sensorsToMonitor)
+            {
+                case "a":
+                    finchRobot.getRightLightSensor();
+                    break;
+                case "b":
+                    finchRobot.getLeftLightSensor();
+                    break;
+                case "c":
+                    finchRobot.getLeftLightSensor();
+                    finchRobot.getRightLightSensor();
+                    break;
+            }
 
             DisplayContinuePrompt();
 
@@ -298,8 +315,23 @@ namespace Project_FinchControl
             DisplayScreenHeader("Range Type");
 
             Console.WriteLine("Range Type:");
+            Console.WriteLine("\ta) Minimum");
+            Console.WriteLine("\tb) Maximum");
             rangeType = Console.ReadLine();
 
+            switch (rangeType)
+            {
+                case "a":
+                    Console.WriteLine("Minimum Range:");
+                    Console.WriteLine("Maximum:");
+                    break;
+                case "b":
+                    Console.WriteLine("Maximum Range:");
+                    Console.ReadLine();
+                    break;
+                default:
+                    break;
+            }
             DisplayContinuePrompt();
 
             return rangeType;

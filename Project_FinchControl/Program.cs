@@ -21,9 +21,9 @@ namespace Project_FinchControl
 
     class Program
     {
-        /// <summary>
+        /// 
         /// first method run when the app starts up
-        /// </summary>
+        /// 
         /// <param name="args"></param>
         static void Main(string[] args)
         {
@@ -34,20 +34,20 @@ namespace Project_FinchControl
             DisplayClosingScreen();
         }
 
-        /// <summary>
+        /// 
         /// setup the console theme
-        /// </summary>
+        /// 
         static void SetTheme()
         {
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
         }
 
-        /// <summary>
+        /// 
         /// *****************************************************************
         /// *                     Main Menu                                 *
         /// *****************************************************************
-        /// </summary>
+        /// 
         static void DisplayMenuScreen()
         {
             Console.CursorVisible = true;
@@ -314,7 +314,6 @@ namespace Project_FinchControl
 
             do
             {
-
                 DisplayScreenHeader("Min/Max Threshold Value");
 
                 Console.WriteLine($"Current Left light sensor: {finchRobot.getLeftLightSensor()}");
@@ -330,7 +329,6 @@ namespace Project_FinchControl
                     Console.WriteLine("Please enter an interger.");
                     DisplayContinuePrompt();
                 }
-
             } while (!validResponse);
 
             //echo value back to user
@@ -358,6 +356,13 @@ namespace Project_FinchControl
 
                 Console.Write($"{rangeType} light sensor value: ");
                 validResponse = int.TryParse(Console.ReadLine(), out timeToMonitor);
+
+                if (!validResponse)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter the amount of seconds to monitor.");
+                    DisplayContinuePrompt();
+                }
 
             } while (!validResponse);
 
@@ -433,7 +438,7 @@ namespace Project_FinchControl
             } while (!quitDataRecorderMenu);
         }
 
-        private static void DataRecorderDisplayData(double[] temperatures)
+        static void DataRecorderDisplayData(double[] temperatures)
         {
             DisplayScreenHeader("Data");
 
@@ -462,7 +467,7 @@ namespace Project_FinchControl
             {
                 Console.WriteLine(
                 (index + 1).ToString().PadLeft(12) +
-                temperatures[index].ToString("n2").PadLeft(10)
+                (temperatures[index] * 9/5 + 32).ToString("n2").PadLeft(10)
                 );
             }
         }
@@ -482,7 +487,7 @@ namespace Project_FinchControl
             for (int index = 0; index < numberOfPoints; index++)
             {
                 temperatures[index] = finchRobot.getTemperature();
-                Console.WriteLine($"Data #{index + 1}: {temperatures[index]} celsius");
+                Console.WriteLine($"Data #{index + 1}: {temperatures[index] * 9/5 + 32} farenheit");
                 frequencyInSeconds = (int)(dataPointFrequency * 500);
                 finchRobot.wait(frequencyInSeconds);
             }
@@ -490,7 +495,6 @@ namespace Project_FinchControl
             Console.WriteLine();
             Console.WriteLine("Current Data");
             DataRecorderDisplayTable(temperatures);
-
             Console.WriteLine();
             Console.WriteLine($"Average Tempurature: {temperatures.Average()}");
 
@@ -541,10 +545,9 @@ namespace Project_FinchControl
             do
             {
             DisplayScreenHeader("Number of Data Points");
-
             Console.WriteLine("Number of data points:");
-
             userResponse = Console.ReadLine();
+
             // validate response
             validResponse = int.TryParse(userResponse, out numberOfDataPoints);
 
@@ -634,7 +637,6 @@ namespace Project_FinchControl
         /// *****************************************************************
         /// 
         /// <param name="finchRobot">finch robot object</param>
-        /// 
         static void DisplayLightAndSound(Finch finchRobot)
         {
             Console.CursorVisible = false;
@@ -662,47 +664,60 @@ namespace Project_FinchControl
         /// <param name="myFinch"></param>
         static void DisplayDance(Finch myFinch)
         {
+            string shape;
+
             Console.CursorVisible = false;
 
             DisplayScreenHeader("Dance");
 
-            Console.WriteLine("\tThe Finch robot will not show off its dance moves!");
-            DisplayContinuePrompt();
-            
-            //
-            //circle
-            //
-            for (int Pattern = 0; Pattern < 4; Pattern++)
-            {
-                //myFinch.setMotors(100, 100);
-                //myFinch.wait(200);
-                //myFinch.setMotors(-100, -100);
-                //myFinch.wait(200);
-                myFinch.setMotors(255, 50);
-                myFinch.wait(1000);
-            }
+            Console.WriteLine("\tWhich shape would you like the finch to go in?");
+            Console.WriteLine("\ta) Circle");
+            Console.WriteLine("\tb) Square");
+            shape = Console.ReadLine();
 
-            //
-            // square
-            //
-            for (int pattern = 0; pattern < 1; pattern++)
+            switch (shape)
             {
-                myFinch.setMotors(255, 255);
-                myFinch.wait(500);
-                myFinch.setMotors(255,50);
-                myFinch.wait(550);
-                myFinch.setMotors(255, 255);
-                myFinch.wait(500);
-                myFinch.setMotors(255, 50);
-                myFinch.wait(550);
-                myFinch.setMotors(255, 255);
-                myFinch.wait(500);
-                myFinch.setMotors(255, 50);
-                myFinch.wait(550);
-                myFinch.setMotors(255, 255);
-                myFinch.wait(500);
-                myFinch.setMotors(255, 50);
-                myFinch.wait(550);
+                case "a":
+                    Console.WriteLine("\tThe finch will now move in a circle");
+                    DisplayContinuePrompt();
+                    for (int Pattern = 0; Pattern < 4; Pattern++)
+                    {
+                        //myFinch.setMotors(100, 100);
+                        //myFinch.wait(200);
+                        //myFinch.setMotors(-100, -100);
+                        //myFinch.wait(200);
+                        myFinch.setMotors(255, 50);
+                        myFinch.wait(1000);
+                    }
+                    break;
+
+                case "b":
+                    Console.WriteLine("\tThe finch will now move in a square");
+                    DisplayContinuePrompt();
+                    for (int pattern = 0; pattern < 1; pattern++)
+                    {
+                        myFinch.setMotors(255, 255);
+                        myFinch.wait(500);
+                        myFinch.setMotors(255,50);
+                        myFinch.wait(550);
+                        myFinch.setMotors(255, 255);
+                        myFinch.wait(500);
+                        myFinch.setMotors(255, 50);
+                        myFinch.wait(550);
+                        myFinch.setMotors(255, 255);
+                        myFinch.wait(500);
+                        myFinch.setMotors(255, 50);
+                        myFinch.wait(550);
+                        myFinch.setMotors(255, 255);
+                        myFinch.wait(500);
+                        myFinch.setMotors(255, 50);
+                        myFinch.wait(550);
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Please enter (a) or (b)");
+                    break;
             }
             myFinch.setMotors(0, 0);
             DisplayMenuPrompt("Talent Show Menu");

@@ -153,7 +153,7 @@ namespace Project_FinchControl
                 switch (menuChoice)
                 {
                     case "a":
-                        sensorsToMonitor = LightAlarmDisplaySetSensorsToMonitor();
+                        sensorsToMonitor = LightAlarmDisplaySetSensorsToMonitor(finchRobot);
                         break;
 
                     case "b":
@@ -284,23 +284,29 @@ namespace Project_FinchControl
             DisplayScreenHeader("Sensors To Monitor");
 
             Console.WriteLine("Sensors to monitor:");
-            Console.WriteLine("\ta)Right");
-            Console.WriteLine("\tb)Left");
-            Console.WriteLine("\tc)Both");
+            Console.WriteLine("\tright");
+            Console.WriteLine("\tleft");
+            Console.WriteLine("\tboth");
             sensorsToMonitor = Console.ReadLine();
 
             switch (sensorsToMonitor)
             {
-                case "a":
+                case "right":
                     finchRobot.getRightLightSensor();
                     break;
-                case "b":
+                case "left":
                     finchRobot.getLeftLightSensor();
                     break;
-                case "c":
+                case "both":
                     finchRobot.getLeftLightSensor();
                     finchRobot.getRightLightSensor();
                     break;
+                default:
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter (right) (left) or (both)");
+                    DisplayContinuePrompt();
+                    break;
+
             }
 
             DisplayContinuePrompt();
@@ -315,21 +321,23 @@ namespace Project_FinchControl
             DisplayScreenHeader("Range Type");
 
             Console.WriteLine("Range Type:");
-            Console.WriteLine("\ta) Minimum");
-            Console.WriteLine("\tb) Maximum");
+            Console.WriteLine("\t minimum");
+            Console.WriteLine("\t maximum");
             rangeType = Console.ReadLine();
 
             switch (rangeType)
             {
-                case "a":
-                    Console.WriteLine("Minimum Range:");
-                    Console.WriteLine("Maximum:");
+                case "minimum":
+                    Console.WriteLine();
+                    Console.WriteLine("The finch will use the Minimum as the rangetype.");
                     break;
-                case "b":
-                    Console.WriteLine("Maximum Range:");
-                    Console.ReadLine();
+                case "maximum":
+                    Console.WriteLine();
+                    Console.WriteLine("The finch will use the Maximum as the rangetype.");
                     break;
                 default:
+                    Console.WriteLine("Please enter (minimum) or (maximum)");
+                    DisplayContinuePrompt();
                     break;
             }
             DisplayContinuePrompt();
@@ -386,7 +394,7 @@ namespace Project_FinchControl
                 Console.WriteLine("Time to Monitor [seconds]");
                 Console.WriteLine();
 
-                Console.Write($"{rangeType} light sensor value: ");
+                Console.Write($"{rangeType} light sensor time to monitor: ");
                 validResponse = int.TryParse(Console.ReadLine(), out timeToMonitor);
 
                 if (!validResponse)

@@ -165,7 +165,7 @@ namespace Project_FinchControl
                 Console.WriteLine("\ta) set Command Parameters");
                 Console.WriteLine("\tb) Add Commands");
                 Console.WriteLine("\tc) View Commands");
-                Console.WriteLine("\td) Exicute Commands");
+                Console.WriteLine("\td) Execute Commands");
                 Console.WriteLine("\tq) Return to Main Menu");
                 Console.Write("\t\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
@@ -188,7 +188,7 @@ namespace Project_FinchControl
                         break;
 
                     case "d":
-                        
+                        DisplayExecuteFinchCommands(finchRobot, commands, commandParameters);
                         break;
                     case "q":
                         quitMenu = true;
@@ -204,7 +204,7 @@ namespace Project_FinchControl
             } while (!quitMenu);
         }
 
-        private static void DisplayExecuteFinchCommands(Finch finch,
+        private static void DisplayExecuteFinchCommands(
             Finch finchRobot,
             List<Command> commands,
             (int motorSpeed, int ledBrightness, double waitSeconds) commandParameters)
@@ -291,7 +291,7 @@ namespace Project_FinchControl
 
             foreach (Command command in commands)
             {
-            Console.WriteLine($"\t{commands}");
+            Console.WriteLine($"\t{command}");
             }
 
 
@@ -321,13 +321,13 @@ namespace Project_FinchControl
             do
             {
                 Console.Write($"Command {commandCount}:");
-                userResponse = Console.ReadLine();
+                userResponse = Console.ReadLine().ToUpper();
 
                 Enum.TryParse<Command>(userResponse, out commandParse);
 
-                if (userResponse != "done")
+                if (userResponse != "DONE")
                 {
-                    if (Enum.TryParse<Command>(userResponse, out commandParse));
+                    if (Enum.TryParse<Command>(userResponse, out commandParse))
                     {
                         commands.Add(commandParse);
                         commandCount = commandCount + 1;
@@ -341,7 +341,7 @@ namespace Project_FinchControl
 
                 }
 
-            } while (userResponse != "done");
+            } while (userResponse != "DONE");
 
             commandCount++;
 
